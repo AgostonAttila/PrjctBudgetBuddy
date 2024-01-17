@@ -1,0 +1,52 @@
+﻿
+@page "/"
+@page "/login";
+@layout FullScreenLayout
+
+@inject IAccountService AccountService
+@inject NavigationManager NavigationManager
+
+@using blazorapp.Models.DTO;
+@using blazorapp.Services.Account;
+
+<h3 class="card-header">Login</h3>
+<div class="card-body">
+    <form class="form-group">
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="text" @bind-value="loginDTO.Email" formControlName="email" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" @bind-value="loginDTO.Password" formControlName="password" class="form-control" />
+        </div>
+        <div class="row">
+            <div class="mb-3 col">              
+                    <button type="button" class="btn btn-primary" @onclick=@(() => HandleLogin())>Login</button>              
+                <NavLink class="nav-link btn btn-link" href ="register">Register</NavLink>
+            </div>
+            <div class="mb-3 col text-end">
+                <NavLink class="nav-link btn btn-link pe-0" href ="forgot-password">Forgot Password?</NavLink>
+            </div>
+        </div>
+    </form>
+</div>
+
+@code {
+
+ 
+	LoginDTO loginDTO = new LoginDTO { Email = "" , Password = "" };
+	string messageCssClass = "";
+
+	protected override void OnInitialized()
+	{
+
+	}
+
+	async Task HandleLogin()
+	{
+		var result = await AccountService.Login(loginDTO);
+		if (result.IsSuccess)
+			NavigationManager.NavigateTo("/home");
+	}
+}
