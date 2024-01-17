@@ -8,6 +8,7 @@ Focusing on what's new in **Dotnet 8** , **Angular 17** , **NextJs14** no compli
 **Clients**:
 
 - Angular 17
+- React 18 (Vite)
 - NextJs 14 (without server)
 - React Native with expo
 - Blazor Dotnet 8
@@ -20,4 +21,4 @@ Focusing on what's new in **Dotnet 8** , **Angular 17** , **NextJs14** no compli
 - Electron
 - Ionic
 - Vue
-- React
+
