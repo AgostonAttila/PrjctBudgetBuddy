@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using WebAPI.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors();
 
 //builder.Services.AddAuthorization();
 
@@ -44,6 +46,13 @@ builder.Services.AddIdentityApiEndpoints<IdentityUser>(options =>
 
 
 var app = builder.Build();
+
+app.UseCors(x => x
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .SetIsOriginAllowed(origin => true) 
+               .AllowCredentials()); 
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
