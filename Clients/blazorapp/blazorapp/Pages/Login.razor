@@ -9,33 +9,29 @@
 @using blazorapp.Services.Account;
 
 <h3 class="card-header">Login</h3>
-<div class="card-body" style="width: 80%">
+<div class="card-body">
 	<EditForm Model="@model" OnValidSubmit="HandleSubmit">
 		<DataAnnotationsValidator />
-		<div class="form-group">
-			<div class="form-group mb-3">
-				<label class="label">Email</label>
+		<div class="row">
+			<div class="mb-3">
+				<label for="Email" class="form-label">Email</label>			
 				<InputText @bind-Value="model.Email" class="form-control" />
 				<ValidationMessage For="@(() => model.Email)" />		
 			</div>
-			<div class="form-group mb-3">
-				<label>Password</label>
+			<div class="mb-3">
+				<label for="Password" class="form-label">Password</label>			
 				<InputText @bind-Value="model.Password" type="password" class="form-control" />
 				<ValidationMessage For="@(() => model.Password)" />
 			</div>
 			<div class="row">
 				<div class="mb-3 col">
-					<button type="button" class="btn btn-primary">
+					<button class="btn btn-primary">
 						@if (loading)
 						{
 							<span class="spinner-border spinner-border-sm mr-1"></span>
 						}
 						Login
-					</button>
-				@* 	@if (!string.IsNullOrEmpty(error))
-					{
-						<div class="alert alert-danger mt-3 mb-0">@error</div>
-					} *@
+					</button>			
 					<NavLink class="nav-link btn btn-link" href="register">Register</NavLink>
 					<NavLink class="nav-link btn btn-link pe-0" href="forgot-password">Forgot Password?</NavLink>
 				</div>				

@@ -16,7 +16,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClientInterceptor();
 builder.Services.AddScoped(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:5296/")
+    BaseAddress = new Uri("http://localhost:5296/")
     //BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
 }
 .EnableIntercept(sp));

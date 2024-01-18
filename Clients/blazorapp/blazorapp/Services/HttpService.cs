@@ -22,6 +22,7 @@ namespace blazorapp.Services
 		private NavigationManager _navigationManager;
 		private ILocalStorageService _localStorageService;
 		private IConfiguration _configuration;
+		private readonly JsonSerializerOptions _options;
 
 		public HttpService(
 			HttpClient httpClient,
@@ -34,6 +35,7 @@ namespace blazorapp.Services
 			_navigationManager = navigationManager;
 			_localStorageService = localStorageService;
 			_configuration = configuration;
+			_options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 		}
 
 		public async Task<T> Get<T>(string uri)
@@ -43,34 +45,46 @@ namespace blazorapp.Services
 		}
 
 		public async Task<T> Post<T>(string uri, object value)
-		{
+		{			
 			var request = new HttpRequestMessage(HttpMethod.Post, uri);
 			request.Content = new StringContent(JsonSerializer.Serialize(value), Encoding.UTF8, "application/json");
 			return await sendRequest<T>(request);
-		}		
+		}
 
 		private async Task<T> sendRequest<T>(HttpRequestMessage request)
 		{			
 			var token = await _localStorageService.GetItemAsync<string>("authToken");
 			var isApiUrl = !request.RequestUri.IsAbsoluteUri;
-			if (!String.IsNullOrWhiteSpace(token) != null && isApiUrl)
+		
+			if (!String.IsNullOrWhiteSpace(token) != null && 
+				isApiUrl
+				&& !request.RequestUri.OriginalString.Contains("login")
+				&& !request.RequestUri.OriginalString.Contains("register"))
 				request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
 			using var response = await _httpClient.SendAsync(request);
 					
 			if (response.StatusCode == HttpStatusCode.Unauthorized)
 			{
-				_navigationManager.NavigateTo("logout");
+				_navigationManager.NavigateTo("login");
 				return default;
 			}
 			
 			if (!response.IsSuccessStatusCode)
 			{
-				var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
-				throw new Exception(error["message"]);
+				//var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+				//throw new Exception(error["message"]);
+				throw new Exception(response.StatusCode.ToString());
 			}
 
-			return await response.Content.ReadFromJsonAsync<T>();
+			if (response.Content.Headers.ContentLength == 0)
+				return default;
+
+			var contentJSON = await response.Content.ReadAsStringAsync();
+			var res = JsonSerializer.Deserialize<T>(contentJSON );
+			// await response.Content.ReadFromJsonAsync<T>();
+
+			return  res;
 		}
 	}
 }
