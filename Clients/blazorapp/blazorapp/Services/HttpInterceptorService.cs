@@ -23,7 +23,7 @@ namespace blazorapp.Services
 
             var absPath = e.Request.RequestUri.AbsolutePath;
 
-            if (!absPath.Contains("Token") && !absPath.Contains("Account"))
+            if (!absPath.Contains("login") && !absPath.Contains("register"))
             {
                 var token = await _refreshTokenService.TryRefreshToken();
 

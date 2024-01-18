@@ -11,9 +11,9 @@ namespace blazorapp.Models.DTO
         [Required(ErrorMessage = "Email is required")]     
         public string Email { get; set; }
 
-		public string? TwoFactorCode { get; set; }
+        public string TwoFactorCode { get; set; } = "string";
 
-		public string? TwoFactorRecoveryCode { get; set; }   
+		public string TwoFactorRecoveryCode { get; set; } = "string";
 
-    }
+	}
 }

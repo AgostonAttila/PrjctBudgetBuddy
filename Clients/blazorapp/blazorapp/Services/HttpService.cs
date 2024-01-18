@@ -22,7 +22,7 @@ namespace blazorapp.Services
 		private NavigationManager _navigationManager;
 		private ILocalStorageService _localStorageService;
 		private IConfiguration _configuration;
-		private readonly JsonSerializerOptions _options;
+	
 
 		public HttpService(
 			HttpClient httpClient,
@@ -34,8 +34,7 @@ namespace blazorapp.Services
 			_httpClient = httpClient;
 			_navigationManager = navigationManager;
 			_localStorageService = localStorageService;
-			_configuration = configuration;
-			_options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+			_configuration = configuration;		
 		}
 
 		public async Task<T> Get<T>(string uri)
@@ -52,15 +51,16 @@ namespace blazorapp.Services
 		}
 
 		private async Task<T> sendRequest<T>(HttpRequestMessage request)
-		{			
-			var token = await _localStorageService.GetItemAsync<string>("authToken");
-			var isApiUrl = !request.RequestUri.IsAbsoluteUri;
+		{		
+			//HTTP Interceptor
+			//var token = await _localStorageService.GetItemAsync<string>("authToken");
+			//var isApiUrl = !request.RequestUri.IsAbsoluteUri;
 		
-			if (!String.IsNullOrWhiteSpace(token) != null && 
-				isApiUrl
-				&& !request.RequestUri.OriginalString.Contains("login")
-				&& !request.RequestUri.OriginalString.Contains("register"))
-				request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			//if (!String.IsNullOrWhiteSpace(token) != null && 
+			//	isApiUrl
+			//	&& !request.RequestUri.OriginalString.Contains("login")
+			//	&& !request.RequestUri.OriginalString.Contains("register"))
+			//	request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
 			using var response = await _httpClient.SendAsync(request);
 					
@@ -81,8 +81,7 @@ namespace blazorapp.Services
 				return default;
 
 			var contentJSON = await response.Content.ReadAsStringAsync();
-			var res = JsonSerializer.Deserialize<T>(contentJSON );
-			// await response.Content.ReadFromJsonAsync<T>();
+			var res = JsonSerializer.Deserialize<T>(contentJSON, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });				
 
 			return  res;
 		}

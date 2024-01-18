@@ -35,6 +35,12 @@ namespace blazorapp.Services.Account
 			_options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 		}
 
+
+		//interceptor only one place
+		//global error handling
+		//authorize attribute
+
+
 		public async Task<Result<string>> Register(RegisterDTO registerDTO)
 		{
 			Dictionary<string, string> registerObj = new Dictionary<string, string>
