@@ -26,9 +26,8 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddScoped<RefreshTokenService>();
-
-//LocalStorage
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
+builder.Services.AddScoped<IHttpService, HttpService>();
 
 //builder.Services.AddOidcAuthentication(options =>
 //{ 

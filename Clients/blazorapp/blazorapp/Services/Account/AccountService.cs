@@ -19,18 +19,20 @@ namespace blazorapp.Services.Account
         private readonly AuthenticationStateProvider _authStateProvider;
         private readonly JsonSerializerOptions _options;
         private readonly ILocalStorageService _localStorageService;
-        private NavigationManager _navigationManager;
+		private IHttpService _httpService;
+		private NavigationManager _navigationManager;
 
         private static System.Timers.Timer refreshTokenTimer;
 
 
-        public AccountService(HttpClient httpClient, AuthenticationStateProvider authStateProvider, ILocalStorageService localStorageService, NavigationManager navigationManager)
+        public AccountService(HttpClient httpClient, AuthenticationStateProvider authStateProvider, ILocalStorageService localStorageService, IHttpService httpService, NavigationManager navigationManager)
         {
             _httpClient = httpClient;
             _localStorageService = localStorageService;
             _navigationManager = navigationManager;
             _authStateProvider = authStateProvider;
-            _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+			_httpService = httpService;
+			_options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         }
 
         public async Task<Result<string>> Register(RegisterDTO registerDTO)
@@ -38,12 +40,11 @@ namespace blazorapp.Services.Account
             var content = JsonSerializer.Serialize(registerDTO);
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
 
-            var result = await _httpClient.PostAsJsonAsync("register", bodyContent);
-            Result<string> resultContent = await result.Content.ReadFromJsonAsync<Result<string>>();
+			var result = await _httpService.Post<string>("register", bodyContent);		
 
-            if (!resultContent.IsSuccess)
+            if (String.IsNullOrWhiteSpace(result))
             {
-                return resultContent;
+                return null;
             }
 
             return new Result<string> { IsSuccess = true };
@@ -51,26 +52,24 @@ namespace blazorapp.Services.Account
 
         public async Task<Result<TokenDTO>> Login(LoginDTO loginDTO)
         {
-            var content = JsonSerializer.Serialize(loginDTO);
-            var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+			var content = JsonSerializer.Serialize(loginDTO);
+			var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");		
 
-            var authResult = await _httpClient.PostAsync("login", bodyContent);
-            var authContent = await authResult.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<Result<TokenDTO>>(authContent, _options);
+			var tokenDTO  = await _httpService.Post<TokenDTO>("login", bodyContent);			
 
-            if (String.IsNullOrWhiteSpace(result.Data.AccessToken))
-                return result;
+            if (String.IsNullOrWhiteSpace(tokenDTO.AccessToken))
+				return new Result<TokenDTO> { IsSuccess = false };
 
-            await _localStorageService.SetItemAsync("authToken", result.Data.AccessToken);
-            await _localStorageService.SetItemAsync("refreshToken", result.Data.AccessToken);
+			await _localStorageService.SetItemAsync("authToken", tokenDTO.AccessToken);
+            await _localStorageService.SetItemAsync("refreshToken", tokenDTO.RefreshToken);
 
             ((CustomAuthStateProvider)_authStateProvider).GetAuthenticationStateAsync();
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", result.Data.AccessToken);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenDTO.AccessToken);
 
             StartRefreshTokenTimer();
 
-            return new Result<TokenDTO> { IsSuccess = true };
-        }
+			return new Result<TokenDTO> { IsSuccess = true };
+		}
 
         public async Task<Result<string>> Logout()
         {

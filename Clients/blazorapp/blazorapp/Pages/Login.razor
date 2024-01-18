@@ -1,5 +1,4 @@
-﻿
-@page "/"
+﻿@page "/"
 @page "/login";
 @layout FullScreenLayout
 
@@ -10,43 +9,72 @@
 @using blazorapp.Services.Account;
 
 <h3 class="card-header">Login</h3>
-<div class="card-body">
-    <form class="form-group">
-        <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="text" @bind-value="loginDTO.Email" formControlName="email" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" @bind-value="loginDTO.Password" formControlName="password" class="form-control" />
-        </div>
-        <div class="row">
-            <div class="mb-3 col">              
-                    <button type="button" class="btn btn-primary" @onclick=@(() => HandleLogin())>Login</button>              
-                <NavLink class="nav-link btn btn-link" href ="register">Register</NavLink>
-            </div>
-            <div class="mb-3 col text-end">
-                <NavLink class="nav-link btn btn-link pe-0" href ="forgot-password">Forgot Password?</NavLink>
-            </div>
-        </div>
-    </form>
+<div class="card-body" style="width: 80%">
+	<EditForm Model="@model" OnValidSubmit="HandleSubmit">
+		<DataAnnotationsValidator />
+		<div class="form-group">
+			<div class="form-group mb-3">
+				<label class="label">Email</label>
+				<InputText @bind-Value="model.Email" class="form-control" />
+				<ValidationMessage For="@(() => model.Email)" />		
+			</div>
+			<div class="form-group mb-3">
+				<label>Password</label>
+				<InputText @bind-Value="model.Password" type="password" class="form-control" />
+				<ValidationMessage For="@(() => model.Password)" />
+			</div>
+			<div class="row">
+				<div class="mb-3 col">
+					<button type="button" class="btn btn-primary">
+						@if (loading)
+						{
+							<span class="spinner-border spinner-border-sm mr-1"></span>
+						}
+						Login
+					</button>
+				@* 	@if (!string.IsNullOrEmpty(error))
+					{
+						<div class="alert alert-danger mt-3 mb-0">@error</div>
+					} *@
+					<NavLink class="nav-link btn btn-link" href="register">Register</NavLink>
+					<NavLink class="nav-link btn btn-link pe-0" href="forgot-password">Forgot Password?</NavLink>
+				</div>				
+			</div>
+		</div>
+	</EditForm>
 </div>
 
 @code {
 
- 
-	LoginDTO loginDTO = new LoginDTO { Email = "" , Password = "" };
-	string messageCssClass = "";
+
+	LoginDTO model = new LoginDTO { Email = "", Password = "" };
+
+	private bool loading;
+	private string error;
 
 	protected override void OnInitialized()
 	{
 
 	}
 
-	async Task HandleLogin()
+	async Task HandleSubmit()
 	{
-		var result = await AccountService.Login(loginDTO);
-		if (result.IsSuccess)
-			NavigationManager.NavigateTo("/home");
+		loading = true;
+		try
+		{
+			var result = await AccountService.Login(model);
+			if (result.IsSuccess)
+			{
+				var returnUrl = NavigationManager.QueryString("returnUrl") ?? "/home";
+				loading = false;
+				NavigationManager.NavigateTo(returnUrl);
+			}
+		}
+		catch (Exception ex)
+		{
+			error = ex.Message;
+			loading = false;
+			StateHasChanged();
+		}
 	}
 }

@@ -9,64 +9,85 @@
 
 <h3 class="card-header">Register</h3>
 <div class="card-body">
-	<form class="form-group">
+	<EditForm Model="@model" OnValidSubmit="HandleSubmit">
+		<DataAnnotationsValidator />
 		<div class="row">
-			<div class="mb-3 col-2">
-				<label class="form-label">Title</label>
-				<select formControlName="title" class="form-select">
-					<option value=""></option>
-					<option value="Mr">Mr</option>
-					<option value="Mrs">Mrs</option>
-					<option value="Miss">Miss</option>
-					<option value="Ms">Ms</option>
-				</select>			
+			<div class="mb-3 col-5">
+				<label for="FirstName" class="form-label">First Name</label>
+				<InputText @bind-Value="model.FirstName" class="form-control" />
+				<ValidationMessage For="@(() => model.FirstName)" class="text-danger d-block" />
 			</div>
 			<div class="mb-3 col-5">
-				<label class="form-label">First Name</label>
-				<input type="text" formControlName="firstName" class="form-control" />				
-			</div>
-			<div class="mb-3 col-5">
-				<label class="form-label">Last Name</label>
-				<input type="text" formControlName="lastName" class="form-control"/>				
+				<label for="LastName" class="form-label">Last Name</label>
+				<InputText @bind-Value="model.LastName" class="form-control" />
+				<ValidationMessage For="@(() => model.LastName)" class="text-danger d-block" />
 			</div>
 		</div>
 		<div class="mb-3">
-			<label class="form-label">Email</label>
-			<input type="text" @bind-value="registerDTO.Username" formControlName="email" class="form-control" />
+			<label for="Email" class="form-label">Email</label>
+			<InputText @bind-Value="model.Email" type="email" class="form-control" />
+			<ValidationMessage For="@(() => model.Email)" class="text-danger d-block" />
 		</div>
 		<div class="row">
 			<div class="mb-3 col">
-				<label class="form-label">Password</label>
-				<input type="password" @bind-value="registerDTO.Password" formControlName="password" class="form-control" />
+				<label for="Password" class="form-label">Password</label>
+				<InputText @bind-Value="model.Password" type="password" class="form-control" />
+				<ValidationMessage For="@(() => model.Password)" class="text-danger d-block" />
 			</div>
 			<div class="mb-3 col">
-				<label class="form-label">Confirm Password</label>
-				<input type="password" formControlName="confirmPassword" class="form-control" />				
+				<label for="ConfirmPassword" class="form-label">Confirm Password</label>
+				<InputText @bind-Value="model.ConfirmPassword" type="password" class="form-control" />
+				<ValidationMessage For="@(() => model.ConfirmPassword)" class="text-danger d-block" />
 			</div>
 		</div>
 		<div class="mb-3 form-check">
-			<input type="checkbox" formControlName="acceptTerms" id="acceptTerms" class="form-check-input" />
-			<label for="acceptTerms" class="form-check-label">Accept Terms & Conditions</label>			
+			<InputCheckbox @bind-Value="model.AcceptTerms" id="acceptTerms" class="form-check-input" />
+			<label for="AcceptTerms" class="form-check-label">Accept Terms & Conditions</label>
+			<ValidationMessage For="() => model.AcceptTerms" class="text-danger d-block" />
 		</div>
-		<div class="mb-3">		
-			<button type="button" class="btn btn-primary" @onclick=@(() => HandleRegistration())>Register</button>
-			<NavLink class="nav-link btn btn-link pe-0" href="login">Cancel</NavLink>		
+		<div class="mb-3">
+			<button class="btn btn-primary">
+				@if (loading)
+				{
+					<span class="spinner-border spinner-border-sm mr-1"></span>
+				}
+				Register
+			</button>
+			<NavLink class="nav-link btn btn-link pe-0" href="login">Cancel</NavLink>
 		</div>
-	</form>
+	</EditForm>
 </div>
 
 @code {
 
-	RegisterDTO registerDTO = new RegisterDTO();
+	RegisterDTO model = new RegisterDTO();
+	private bool loading;
+	private string error;
 
 	protected override void OnInitialized()
 	{
-
+		
 	}
 
-	async Task HandleRegistration()
-	{	
-		var result = await AccountService.Register(registerDTO);
+	async Task HandleSubmit()
+	{
+		loading = true;
+		try
+		{
+			var result = await AccountService.Register(model);
+			if (result.IsSuccess)
+			{
+				var returnUrl = NavigationManager.QueryString("returnUrl") ?? "/login";
+				loading = false;
+				NavigationManager.NavigateTo(returnUrl);
+			}
+		}
+		catch (Exception ex)
+		{
+			error = ex.Message;
+			loading = false;
+			StateHasChanged();
+		}		
 	}
 
 }

@@ -3,14 +3,15 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(FullScreenLayout)">
                 <NotAuthorized>
-                    @if (context.User.Identity?.IsAuthenticated != true)
+                    <RedirectToLogin />
+                   @*  @if (context.User.Identity?.IsAuthenticated != true)
                     {
                         <RedirectToLogin />
                     }
                     else
                     {
                         <p role="alert">You are not authorized to access this resource.</p>
-                    }
+                    } *@
                 </NotAuthorized>
             </AuthorizeRouteView>
             <FocusOnNavigate RouteData="@routeData" Selector="h1" />
@@ -18,7 +19,7 @@
         <NotFound>
             <PageTitle>Not found</PageTitle>
             <LayoutView Layout="@typeof(FullScreenLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
+               <blazorapp.Pages.Error404></blazorapp.Pages.Error404>
             </LayoutView>
         </NotFound>
     </Router>
