@@ -4,7 +4,8 @@ using System.Security.Claims;
 
 using blazorapp.Helpers;
 using blazorapp.Services;
-
+using Microsoft.AspNetCore.Components;
+using blazorapp.Models;
 
 
 namespace blazorapp.AuthStateProvider
@@ -27,22 +28,30 @@ namespace blazorapp.AuthStateProvider
             //if (string.IsNullOrWhiteSpace(token))
             //	return _anonymous;
 
-            var identity = new ClaimsIdentity();
+         
+
+
+           var identity = new ClaimsIdentity();
             _http.DefaultRequestHeaders.Authorization = null;
-            try
-            {
-                identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwtAuthType");
-                _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
-                //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.Replace("\"", ""));
 
-            }
-            catch (Exception)
+            if (!String.IsNullOrWhiteSpace(token))
             {
-                await _localStorageService.RemoveItemAsync("authToken");
-                identity = new ClaimsIdentity();
-            }
 
-            var state = new AuthenticationState(new ClaimsPrincipal(identity));
+                try
+                {
+                    identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwtAuthType");
+                    _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
+                    //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.Replace("\"", ""));
+
+                }
+                catch (Exception e)
+                {
+                    await _localStorageService.RemoveItemAsync("authToken");
+                    identity = new ClaimsIdentity();
+                }
+            }
+            var user = new ClaimsPrincipal(identity);
+            var state = new AuthenticationState(user);
             NotifyAuthenticationStateChanged(Task.FromResult(state));
 
             return state;
@@ -50,20 +59,15 @@ namespace blazorapp.AuthStateProvider
 
         }
 
-        //public void NotifyUserAuthentication(string token)
-        //{
-        //	var authenticatedUser = new ClaimsPrincipal(new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwtAuthType"));
-        //	var authState = Task.FromResult(new AuthenticationState(authenticatedUser));
-        //	NotifyAuthenticationStateChanged(authState);
-        //}
+        public  async Task Authenticate(UserInfo userInfo)
+        {
+            var identity = new ClaimsIdentity(userInfo.Claims.Select(c=>new Claim(c.Key,c.Value)));
+            var user = new ClaimsPrincipal(identity);
+            var state = new AuthenticationState(user);
+            NotifyAuthenticationStateChanged(Task.FromResult(state));
 
-        //public void NotifyUserLogout()
-        //{
-        //	var authState = Task.FromResult(_anonymous);
-        //	NotifyAuthenticationStateChanged(authState);
-        //}
+        }
 
 
-
-    }
+    }   
 }

@@ -83,7 +83,7 @@ namespace blazorapp.Services.Account
 			await _localStorageService.SetItemAsync("authToken", tokenDTO.AccessToken);
 			await _localStorageService.SetItemAsync("refreshToken", tokenDTO.RefreshToken);
 
-			((CustomAuthStateProvider)_authStateProvider).GetAuthenticationStateAsync();
+			await ((CustomAuthStateProvider)_authStateProvider).GetAuthenticationStateAsync();
 			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", tokenDTO.AccessToken);
 
 			StartRefreshTokenTimer();
@@ -103,7 +103,7 @@ namespace blazorapp.Services.Account
 			await _localStorageService.RemoveItemAsync("authToken");
 			await _localStorageService.RemoveItemAsync("refreshToken");
 
-			((CustomAuthStateProvider)_authStateProvider).GetAuthenticationStateAsync();
+			await ((CustomAuthStateProvider)_authStateProvider).GetAuthenticationStateAsync();
 			_httpClient.DefaultRequestHeaders.Authorization = null;
 
 			StopRefreshTokenTimer();

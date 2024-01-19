@@ -8,6 +8,7 @@ using blazorapp.AuthStateProvider;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Net.NetworkInformation;
 using blazorapp.StateContainers;
+using static blazorapp.AuthStateProvider.CustomAuthStateProvider;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

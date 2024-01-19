@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using blazorapp.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace blazorapp.Models.DTO
 {
@@ -23,11 +24,11 @@ namespace blazorapp.Models.DTO
 		public string? ConfirmPassword { get; set; }
 
 		[Required(ErrorMessage = "Email is required")]
-        [StringLength(50, ErrorMessage = "Must be between 5 and 50 characters", MinimumLength = 5)]
-        [RegularExpression("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$", ErrorMessage = "Must be a valid email")]
+		[EmailAddress]
+		//[RegularExpression("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$", ErrorMessage = "Must be a valid email")]
         public string? Email { get; set; }
 
-		//Individual Validation
+		[IsTrue(ErrorMessage = "AcceptTerms must be checked")]
 		[Required]
 		public bool AcceptTerms { get; set; }
 	}
