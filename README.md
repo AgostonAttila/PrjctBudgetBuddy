@@ -12,13 +12,12 @@ Focusing on what's new in **Dotnet 8** , **Angular 17** , **NextJs14** no compli
 - NextJs 14 (without server)
 - React Native with expo
 - Blazor Dotnet 8
+- Blazor with server part (new identity pages etc.)
 - MAUI Dotnet 8
 
 **Maybe later**:
 
 - NextJs with server part
-- Blazor with server part (new identity pages etc.)
 - Electron
 - Ionic
 - Vue
-
