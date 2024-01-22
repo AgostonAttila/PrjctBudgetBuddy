@@ -1,7 +1,7 @@
 Personal finance app with multiple clients.
 Focusing on what's new in **Dotnet 8** , **Angular 17** , **NextJs14** no complicated logic just keep it simple
 
-None of the projects are not ready and are very deficient from a security point of view, as they are only of a test nature, so they are not suitable for use in production
+None of the projects are ready and are very deficient from a security point of view, as they are only of a test nature, so they are not suitable for use in production
 
 **Server**:
 
