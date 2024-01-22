@@ -51,9 +51,16 @@ namespace blazorapp.Services.Account
 
 			try
 			{
-				var result = await _httpService.Post<string>("register", registerObj);
-				
-				if (String.IsNullOrWhiteSpace(result))
+				//var result = await _httpService.Post<string>("register", registerObj);
+
+				var content = JsonSerializer.Serialize(registerDTO);
+				var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+				var authResult = await _httpClient.PostAsync("register", bodyContent);
+				var authContent = await authResult.Content.ReadAsStringAsync();
+				var result = authContent.ToString();
+
+				if (!String.IsNullOrWhiteSpace(result) && result == "Registration success") 
 					return new Result<string> { IsSuccess = true };
 			}
 			catch (Exception e)

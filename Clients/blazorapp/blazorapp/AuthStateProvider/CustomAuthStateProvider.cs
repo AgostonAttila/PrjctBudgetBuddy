@@ -39,6 +39,7 @@ namespace blazorapp.AuthStateProvider
 
                 try
                 {
+                    //Must be build in some checkers issuer, audience etc
                     identity = new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token), "jwtAuthType");
                     _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", token);
                     //_http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.Replace("\"", ""));
@@ -56,18 +57,7 @@ namespace blazorapp.AuthStateProvider
 
             return state;
 
-
-        }
-
-        public  async Task Authenticate(UserInfo userInfo)
-        {
-            var identity = new ClaimsIdentity(userInfo.Claims.Select(c=>new Claim(c.Key,c.Value)));
-            var user = new ClaimsPrincipal(identity);
-            var state = new AuthenticationState(user);
-            NotifyAuthenticationStateChanged(Task.FromResult(state));
-
-        }
-
+        }       
 
     }   
 }

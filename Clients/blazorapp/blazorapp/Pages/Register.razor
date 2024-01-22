@@ -66,7 +66,7 @@
 
 	protected override void OnInitialized()
 	{
-		
+
 	}
 
 	async Task HandleSubmit()
@@ -81,13 +81,17 @@
 				loading = false;
 				NavigationManager.NavigateTo(returnUrl);
 			}
+			else
+			{
+				loading = false;
+			}
 		}
 		catch (Exception ex)
 		{
 			error = ex.Message;
 			loading = false;
 			StateHasChanged();
-		}		
+		}
 	}
 
 }

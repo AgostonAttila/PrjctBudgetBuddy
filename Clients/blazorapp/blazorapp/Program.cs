@@ -30,11 +30,6 @@ builder.Services.AddScoped<RefreshTokenService>();
 builder.Services.AddScoped<ILocalStorageService, LocalStorageService>();
 builder.Services.AddScoped<IHttpService, HttpService>();
 
-//builder.Services.AddOidcAuthentication(options =>
-//{ 
-//    builder.Configuration.Bind("Local", options.ProviderOptions);
-//});
-
 //State containers
 builder.Services.AddSingleton<AppState>();
 
