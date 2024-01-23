@@ -1,18 +1,19 @@
-﻿@page "/home"
+﻿@page "/authneed"
 
 @using Microsoft.AspNetCore.Authorization
 @using System.Security.Claims
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @layout MainLayout
-@attribute [Authorize] 
+@attribute [Authorize]
 
-<PageTitle>Home</PageTitle>
+
+<PageTitle>Auth</PageTitle>
 
 <div>
     <AuthorizeView>
         <Authorized>
             Authorized
-            @context.User.Identity?.Name           
+            @context.User.Identity?.Name
         </Authorized>
         <NotAuthorized>
             Not Authorized
@@ -34,12 +35,12 @@
         {
             <li>@claim.Type: @claim.Value</li>
         }
-    </ul>  
+    </ul>
 }
 
 <p>@surname</p>
 
-@code{
+@code {
     private string? authMessage;
     private string? surname;
     private IEnumerable<Claim> claims = Enumerable.Empty<Claim>();

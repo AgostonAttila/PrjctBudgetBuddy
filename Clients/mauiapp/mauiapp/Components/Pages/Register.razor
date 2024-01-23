@@ -4,11 +4,10 @@
 @inject IAccountService AccountService
 @inject NavigationManager NavigationManager
 
-@using blazorapp.Models.DTO;
-@using blazorapp.Services.Account;
+@using mauiapp.Components.Layout
+@using mauiapp.Models.DTO;
+@using mauiapp.Services.Account;
 
-<div class="card" style="width: 100rem;">
-	<div class="card-header">Register</div>
 <div class="card-body">
 	<EditForm Model="@model" OnValidSubmit="HandleSubmit">
 		<DataAnnotationsValidator />
@@ -57,7 +56,6 @@
 			<NavLink class="nav-link btn btn-link pe-0" href="login">Cancel</NavLink>
 		</div>
 	</EditForm>
-</div>
 </div>
 
 @code {

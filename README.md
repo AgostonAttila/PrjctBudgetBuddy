@@ -10,9 +10,9 @@ None of the projects are ready and are very deficient from a security point of v
 
 **Clients**:
 
-- Blazor Dotnet 8
 - Blazor with server part (new identity pages etc.)
-- MAUI Dotnet 8 (Hybrid)
+- Blazor Dotnet 8
+- MAUI Dotnet 8 (Hybrid) (It could have common components with Blazor, but i want to separate projects)
 - Angular 17
 - React 18 (Vite)
 - NextJs 14 (without server)

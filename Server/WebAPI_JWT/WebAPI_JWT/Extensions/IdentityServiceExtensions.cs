@@ -12,7 +12,7 @@ namespace WebAPI_JWT.Extensions
     {
         public static IServiceCollection AddOwnIdentityService(this IServiceCollection services, IConfiguration config)
         {
-            services.AddIdentityCore<AppUser>(opt =>
+            services.AddIdentityCore<AppUser>(options =>
             {
                 //Lockout
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
